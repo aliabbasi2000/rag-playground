@@ -1,0 +1,10 @@
+services:
+  rag:
+    build: .
+    volumes:
+      - ./data:/app/data
+    environment:
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - OLLAMA_MODEL=qwen3:0.6b
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
