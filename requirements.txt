@@ -1,11 +1,15 @@
+# LLM
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch==2.2.2+cpu
 sentence-transformers
 ollama
 faiss-cpu
+nltk
+
 requests
 python-dotenv
 wikipedia
+# DB
 psycopg2-binary
 pgvector
 sqlalchemy

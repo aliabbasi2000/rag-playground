@@ -9,8 +9,8 @@ A learning project for building a Retrieval-Augmented Generation (RAG) pipeline 
 
 For Windows machine:
 
-- **WSL2** with Ubuntu
-- **Docker Desktop** with WSL2 integration enabled 
+- **WSL** with Ubuntu
+- **Docker Desktop** with WSL integration enabled 
 
 ## Installation
 
