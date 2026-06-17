@@ -22,7 +22,8 @@ curl -fsSL https://ollama.com/install.sh | sh
 ollama pull qwen3:0.6b
 ollama pull nomic-embed-text
 
-ollama serve
+# listen on every network interface so Docker can reach Ollama
+OLLAMA_HOST=0.0.0.0 ollama serve
 ```
 
 To verify the models are loaded:
