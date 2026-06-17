@@ -26,4 +26,27 @@ def get_psql_session():
     Session = sessionmaker(bind=engine)
     return Session()
 
-print(get_psql_session())
+#print(get_psql_session())
+
+class TextEmbedding(Base):
+    __tablename__ = "text_embeddings"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    embedding = Column(Vector)
+    content = Column(String)
+    file_name = Column(String)
+    sentence_number = Column(Integer)
+
+    def __str__(self):
+        return self.content + " " + str(self.id)
+    
+def insert_embeddings(embeddings, contents, file_names, session):
+    for embedding, content, file_name in zip(embeddings, contents, file_names):
+        new_embedding = TextEmbedding(embedding=embedding, content=content, file_name=file_name)
+        session.add(new_embedding)
+    
+    session.commit()
+
+# TEST
+if __name__ == "__main__":
+    insert_embeddings([[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]], ["Sample sentence.", "Sample sentence2."], ["test_file1.txt", "test_file2.txt"], get_psql_session())
+    print("Sample embeddings inserted into the database.")
