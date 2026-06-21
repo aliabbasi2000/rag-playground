@@ -43,6 +43,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### Environment Variables
+
+Before running the project, copy the example environment file and update it with your credentials:
+
+```bash
+cp .env.example .env
+```
 
 ---
 
