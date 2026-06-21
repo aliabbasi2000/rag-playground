@@ -1,13 +1,13 @@
 import os
-from ollama import embed
+from ollama import Client
 from nltk.tokenize import sent_tokenize
-from sentence_transformers import SentenceTransformer
 from embedding_db import get_psql_session, TextEmbedding
 
 def populate_vector_database(folder_path="./data/all_articles"):
 
     session = get_psql_session()
-    model = SentenceTransformer("models/Qwen3-Embedding-0.6B", device="cpu") #https://huggingface.co/Qwen/Qwen3-Embedding-0.6B
+    host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
+    client = Client(host=host)
 
     for filename in os.listdir(folder_path):
         file_path = os.path.join(folder_path, filename)
@@ -15,16 +15,15 @@ def populate_vector_database(folder_path="./data/all_articles"):
 
         try:
             with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
+                file_content = f.read()
 
-            sentences = sent_tokenize(content)
-            #embeddings = embed(model="custom_deepseek", input=sentences)["embeddings"]
-            embeddings = model.encode(sentences)
+            sentences = sent_tokenize(file_content)
+            embeddings = client.embed(model="nomic-embed-text", input=sentences)["embeddings"]
             
-            for i, (embedding, content) in enumerate(zip(embeddings, sentences)):
+            for i, (embedding, sentence) in enumerate(zip(embeddings, sentences)):
                 new_embedding = TextEmbedding(
                     embedding=embedding,
-                    content=content,
+                    content=sentence,
                     file_name=filename,
                     sentence_number=i + 1,
                 )
@@ -33,7 +32,10 @@ def populate_vector_database(folder_path="./data/all_articles"):
 
             print(f"Successfully generated embeddings for: {file_path}")
 
-
+        except IOError as e:
+            print(f"Error reading {filename}: {str(e)}")
+            continue
+        
         except Exception as e:
             print(f"Error processing {filename}: {str(e)}")
             continue
