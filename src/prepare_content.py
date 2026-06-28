@@ -41,11 +41,11 @@ def search_by_query(query, num_matches=5, group_window_size=5):
     host = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
     client = Client(host=host)
 
-    sentences = sent_tokenize(query)
-    embeddings = client.embed(model="nomic-embed-text", input=sentences)["embeddings"]
+    response = client.embed(model="nomic-embed-text", input=query)["embeddings"]
+    query_embedding = response[0]
 
     # Pull in more than 5 search results to ensure after consulidating the overlapping results, we have 5 unique context windows.
-    search_result = search_embeddings(query_embedding=embeddings[0], session=session, limit=num_matches * (2 * group_window_size + 1))
+    search_result = search_embeddings(query_embedding=query_embedding, session=session, limit=num_matches * (2 * group_window_size + 1))
     filtered_matches = get_filtered_matches(search_result, group_window_size=group_window_size)
 
     entry_ids = [match.id for match in filtered_matches]
